@@ -224,6 +224,9 @@ __Istio, Linkerd, Linkerd2 和 Consul 四种 Service Mesh 的横向对比__
 2. 目前 Istio 不支持集群内外通信的安全连接
 
 
+## 参考资料及文献：
+1. Istio 官方文档
+2. kubedex.com
 
 
 
