@@ -75,34 +75,34 @@ __“控制面“__：负责管理和配置代理路由流量。此外，控制�
 
 - Sidecar ( 在 Istio 中，默认的 Sidecar 是 Envoy )
 
-Envoy 是使用 C++ 开发的高性能代理，用于调解服务网格中所有服务的入站和出站流量。在 Istio 中，Envoy 被用于 Sidecar ，和对应的应用服务部署在同一个 Kubernetes 的 Pod 中。
+    Envoy 是使用 C++ 开发的高性能代理，用于调解服务网格中所有服务的入站和出站流量。在 Istio 中，Envoy 被用于 Sidecar ，和对应的应用服务部署在同一个 Kubernetes 的 Pod 中。
 
-Envoy 调解所有出入应用服务的流量。所有经过 Envoy 的流量行为都会调用 Mixer，为Mixer 提供一组描述请求和请求周围环境的 Attribute 。根据 Envoy 的配置和 Attribute，Mixer 会调用各种后台的基础设施资源。而这些 Attribute 又可以在 Mixer 中用于决策使用何种策略，并发送给监控系统，以提供整个网格行为的信息。
+    Envoy 调解所有出入应用服务的流量。所有经过 Envoy 的流量行为都会调用 Mixer，为Mixer 提供一组描述请求和请求周围环境的 Attribute 。根据 Envoy 的配置和 Attribute，Mixer 会调用各种后台的基础设施资源。而这些 Attribute 又可以在 Mixer 中用于决策使用何种策略，并发送给监控系统，以提供整个网格行为的信息。
 
 
 - Pilot
 
-Pilot 为 Sidecar 提供“服务发现”功能，并管理高级路由( 如 A/B 测试和金丝雀部署 )和故障处理( 超时、重试、熔断器等 )的流量。Pilot 将这些“高级”的流量行为转换为详尽的 Sidecar (即 Envoy) 配置项，并在运行时将它们配置到 Sidecar 中。
+    Pilot 为 Sidecar 提供“服务发现”功能，并管理高级路由( 如 A/B 测试和金丝雀部署 )和故障处理( 超时、重试、熔断器等 )的流量。Pilot 将这些“高级”的流量行为转换为详尽的 Sidecar (即 Envoy) 配置项，并在运行时将它们配置到 Sidecar 中。
 
-Pilot 将服务发现机制提炼为供数据面使用的 API ，即任何 Sidecar 都可以使用的标准格式。这种松耦合的设计模式使 Istio 能在多种环境( Kubernetes、Consul 和 Nomad )下运行，同时保持用于流量管理操作的相同。
+    Pilot 将服务发现机制提炼为供数据面使用的 API ，即任何 Sidecar 都可以使用的标准格式。这种松耦合的设计模式使 Istio 能在多种环境( Kubernetes、Consul 和 Nomad )下运行，同时保持用于流量管理操作的相同。
 
 
 - Mixer
 
-Mixer 是一个独立于平台的组件，通过从 Sidecar 和一些其他服务处收集数据，进而在整个 Service Mesh 上控制访问和执行策略。Sidecar 请求级别的 Attribute 被发送到 Mixer 进行评估。( 关于 Attribute 的定西，详见下文 )
+    Mixer 是一个独立于平台的组件，通过从 Sidecar 和一些其他服务处收集数据，进而在整个 Service Mesh 上控制访问和执行策略。Sidecar 请求级别的 Attribute 被发送到 Mixer 进行评估。( 关于 Attribute 的定西，详见下文 )
 
-Mixer 中还包括一个灵活的插件，使其能接入各种主机环境和基础设施的后段，并得到 Sidecar 代理和 Istio 所管理的服务。
+    Mixer 中还包括一个灵活的插件，使其能接入各种主机环境和基础设施的后段，并得到 Sidecar 代理和 Istio 所管理的服务。
 
-__Mixer 的设计还具有以下特点__：
-1. 无状态：Mixer 本身是无状态的，它没有持久化存储的管理功能。
-2. 高可用：Mixer 被设计成高度可用的组件，任何单独的 Mixer 实例实现 > 99.999% 的正常运行时间
-3. 缓存和缓冲：Mixer 能够积累大量短暂的瞬间状态 
-> ( 其能够作为 Envoy 的二级缓存，见 Attribute 与服务监控 )
+    __Mixer 的设计还具有以下特点__：
+    1. 无状态：Mixer 本身是无状态的，它没有持久化存储的管理功能。
+    2. 高可用：Mixer 被设计成高度可用的组件，任何单独的 Mixer 实例实现 > 99.999% 的正常运行时间
+    3. 缓存和缓冲：Mixer 能够积累大量短暂的瞬间状态 
+    > ( 其能够作为 Envoy 的二级缓存，见 Attribute 与服务监控 )
 
 
 - Citadel
 
-Citadel 通过内置身份和凭证管理提供“服务间”和“最终用户”身份验证。Citadel 可用于升级服务网格中未加密的流量，并能够为运维人员提供基于服务标识( 如 Kubernetes 中 Pod 的标签或版本号 )而不是网络层的强制执行策略。
+    Citadel 通过内置身份和凭证管理提供“服务间”和“最终用户”身份验证。Citadel 可用于升级服务网格中未加密的流量，并能够为运维人员提供基于服务标识( 如 Kubernetes 中 Pod 的标签或版本号 )而不是网络层的强制执行策略。
 
 
 ### Istio 与 Envoy 的关系
